@@ -48,7 +48,7 @@ while True:
     if len(lmlist) != 0:
         indexX, indexY = lmlist[8][1], lmlist[8][2]
         if openList[1] == 1 and openList[2] == 0:
-            print('Drawing')
+            #print('Drawing')
             if color == (255, 255, 255):
                 cv2.circle(img, (indexX, indexY), 20, color, cv2.FILLED)
             else:
@@ -69,7 +69,7 @@ while True:
             xp, yp = indexX, indexY
 
         elif openList[1] == 1 and openList[2] == 1:
-            print('Selecting')
+            #print('Selecting')
             xp, yp = 0, 0
             if indexX < 115:
                 if 0 < indexY < 120:
@@ -107,7 +107,7 @@ while True:
             clearing = True
             clear_time = time.time()
         elif clear_time-time.time() < -2:
-            print("clear")
+            #print("clear")
             canvasImg.fill(255)
             overlayDrawing.fill(0)
             clearing = False
@@ -120,12 +120,15 @@ while True:
             saving = True
             save_time = time.time()
         elif save_time-time.time() < -2:
-            print("save")
+            #print("save")
             if os.path.isdir(save_path) == False:
                 os.mkdir(save_path)
             cv2.imwrite(save_path + time.strftime("%Y-%m-%d-%H.%M.%S") + '.jpg', img)
             cv2.imwrite(save_path + 'Canvas-'+time.strftime("%Y-%m-%d-%H.%M.%S") + '.jpg', canvasImg)
+            cv2.putText(img, 'Saving', (500, 400), cv2.FONT_HERSHEY_PLAIN, 10, (255, 255, 255), 2)
+
             saving = False
+            time.sleep(2)
     else:
         saving = False
 
