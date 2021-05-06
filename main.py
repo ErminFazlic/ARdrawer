@@ -100,6 +100,7 @@ while True:
     img = cv2.bitwise_or(img, overlayDrawing)
 
     if detector.isThumbsDown(img):
+        xp, yp = 0, 0
         if not clearing:
             clearing = True
             clear_time = time.time()
@@ -112,13 +113,14 @@ while True:
         clearing = False
 
     if detector.isThumbsUp(img):
+        xp, yp = 0, 0
         if not saving:
             saving = True
             save_time = time.time()
         elif save_time-time.time() < -2:
             print("save")
-            cv2.imwrite(save_path + time.strftime("%Y-%m-%d-%H-%M") + '.jpg', img)
-            cv2.imwrite(save_path + 'Canvas-'+time.strftime("%Y-%m-%d-%H-%M") + '.jpg', canvasImg)
+            cv2.imwrite(save_path + time.strftime("%Y-%m-%d-%H.%M.%S") + '.jpg', img)
+            cv2.imwrite(save_path + 'Canvas-'+time.strftime("%Y-%m-%d-%H.%M.%S") + '.jpg', canvasImg)
             saving = False
     else:
         saving = False
