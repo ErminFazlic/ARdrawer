@@ -3,6 +3,7 @@ import numpy as np
 
 import HandTrackingModule as htm
 import os
+import time
 
 
 folder = 'Overlay'
@@ -17,6 +18,11 @@ sidebar = sidebar[0:720, 0:115]
 color = (255, 255, 255)
 xp, yp = 0, 0
 brushThickness = 15
+saving = False
+clearing = False
+clear_time = time.time()
+save_time = time.time()
+save_path = 'screenshots/'
 
 capture = cv2.VideoCapture(0)
 capture.set(3, 1280)
@@ -79,14 +85,44 @@ while True:
                 elif 480 < indexY < 600:
                     sidebar = overlayList[5][0:720, 0:115]
                     color = (255, 255, 255)
-                elif 600 < indexY < 720:
+                elif 600 < indexY:
                     sidebar = overlayList[0][0:720, 0:115]
+                    canvasImg.fill(255)
+                    overlayDrawing.fill(0)
+
+
+
 
     imgGrey = cv2.cvtColor(overlayDrawing, cv2.COLOR_BGR2GRAY)
     _, imgInversed = cv2.threshold(imgGrey, 50, 255, cv2.THRESH_BINARY_INV)
     imgInversed = cv2.cvtColor(imgInversed, cv2.COLOR_GRAY2BGR)
     img = cv2.bitwise_and(img, imgInversed)
     img = cv2.bitwise_or(img, overlayDrawing)
+
+    if detector.isThumbsDown(img):
+        if not clearing:
+            clearing = True
+            clear_time = time.time()
+        elif clear_time-time.time() < -2:
+            print("clear")
+            canvasImg.fill(255)
+            overlayDrawing.fill(0)
+            clearing = False
+    else:
+        clearing = False
+
+    if detector.isThumbsUp(img):
+        if not saving:
+            saving = True
+            save_time = time.time()
+        elif save_time-time.time() < -2:
+            print("save")
+            cv2.imwrite(save_path + time.strftime("%Y-%m-%d-%H-%M") + '.jpg', img)
+            cv2.imwrite(save_path + 'Canvas-'+time.strftime("%Y-%m-%d-%H-%M") + '.jpg', canvasImg)
+            saving = False
+    else:
+        saving = False
+
 
     img[0:720, 0:115] = sidebar
     #img = cv2.addWeighted(img, 0.5, canvasImg, 0.5, 0)
