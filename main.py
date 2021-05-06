@@ -27,6 +27,8 @@ detector = htm.Hand()
 canvasImg = np.zeros((720, 1280, 3), np.uint8)
 canvasImg.fill(255)
 
+overlayDrawing = np.zeros((720, 1280, 3), np.uint8)
+
 while True:
     success, img = capture.read()
     img = cv2.flip(img, 1)
@@ -47,8 +49,15 @@ while True:
             if xp == 0 and yp == 0:
                 xp, yp = indexX, indexY
 
-            cv2.line(img, (xp, yp), (indexX, indexY), color, brushThickness)
-            cv2.line(canvasImg, (xp, yp), (indexX, indexY), color, brushThickness+20)
+            #cv2.line(img, (xp, yp), (indexX, indexY), color, brushThickness+20)
+
+            if color == (255, 255, 255):
+                cv2.line(overlayDrawing, (xp, yp), (indexX, indexY), (0,0,0), brushThickness + 40)
+                cv2.line(canvasImg, (xp, yp), (indexX, indexY), color, brushThickness + 40)
+            else:
+                cv2.line(overlayDrawing, (xp, yp), (indexX, indexY), color, brushThickness + 20)
+                cv2.line(canvasImg, (xp, yp), (indexX, indexY), color, brushThickness + 20)
+
             xp, yp = indexX, indexY
 
         elif openList[1] == 1 and openList[2] == 1:
@@ -73,8 +82,11 @@ while True:
                 elif 600 < indexY < 720:
                     sidebar = overlayList[0][0:720, 0:115]
 
-    imgGrey = cv2.cvtColor(canvasImg, cv2.COLOR_BGR2GRAY)
+    imgGrey = cv2.cvtColor(overlayDrawing, cv2.COLOR_BGR2GRAY)
     _, imgInversed = cv2.threshold(imgGrey, 50, 255, cv2.THRESH_BINARY_INV)
+    imgInversed = cv2.cvtColor(imgInversed, cv2.COLOR_GRAY2BGR)
+    img = cv2.bitwise_and(img, imgInversed)
+    img = cv2.bitwise_or(img, overlayDrawing)
 
     img[0:720, 0:115] = sidebar
     #img = cv2.addWeighted(img, 0.5, canvasImg, 0.5, 0)
