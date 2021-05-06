@@ -1,3 +1,5 @@
+import ntpath
+
 import cv2
 import numpy as np
 
@@ -119,6 +121,8 @@ while True:
             save_time = time.time()
         elif save_time-time.time() < -2:
             print("save")
+            if os.path.isdir(save_path) == False:
+                os.mkdir(save_path)
             cv2.imwrite(save_path + time.strftime("%Y-%m-%d-%H.%M.%S") + '.jpg', img)
             cv2.imwrite(save_path + 'Canvas-'+time.strftime("%Y-%m-%d-%H.%M.%S") + '.jpg', canvasImg)
             saving = False
