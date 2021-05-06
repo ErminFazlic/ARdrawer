@@ -127,8 +127,9 @@ while True:
             cv2.imwrite(save_path + 'Canvas-'+time.strftime("%Y-%m-%d-%H.%M.%S") + '.jpg', canvasImg)
             cv2.putText(img, 'Saving', (500, 400), cv2.FONT_HERSHEY_PLAIN, 10, (255, 255, 255), 2)
 
-            saving = False
             time.sleep(2)
+            saving = False
+
     else:
         saving = False
 
